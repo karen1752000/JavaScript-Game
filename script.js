@@ -25,7 +25,10 @@ function startGame() {
 }
 
 function turnClick(square) {
-	turn(square.target.id, huPlayer)
+	if (typeof origBoard[square.target.id] == 'number') {
+		turn(square.target.id, huPlayer)
+		if (!checkWin(origBoard, huPlayer) && !checkTie()) turn(bestSpot(), aiPlayer);
+	}
 }
 
 
@@ -59,5 +62,50 @@ function gameOver(gameWon) {
 	for (var i = 0; i < cells.length; i++) {
 		cells[i].removeEventListener('click', turnClick, false)
 	}
+	declareWinner(gameWon.player == huPlayer ? "You Win!" : "Try Again");
 }
+
+function declareWinner(who) {
+	document.querySelector(".endgame").style.display = "block";
+	document.querySelector(".endgame .text").innerText = who;
+}
+
+function emptySquares(){
+	return origBoard.filter(s => typeof s == 'number');
+}
+
+function bestSpot() {
+	return emptySquares() [0];
+}
+
+function checkTie() {
+	if (emptySquares().length == 0) {
+		for (var i =0; i < cells.length; i++) {
+			cells[i].style.backgroundColor = "green";
+			cells[i].removeEventListener('click', turnClick, false);
+		}
+		declareWinner("Tie Game!")
+		return true;
+	}
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
